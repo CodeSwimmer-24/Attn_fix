@@ -1,7 +1,3 @@
----
-share: "true"
----
-
 > This will be a worker application that will connect worker with clients/customers.
 
 Our focus is on two parties
