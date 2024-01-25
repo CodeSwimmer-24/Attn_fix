@@ -1,10 +1,11 @@
-FROM crow:latest
+FROM drogon:latest
 
 WORKDIR /app
 
 COPY . .
 
-RUN make prepare
-RUN cd build && cmake --build .
+RUN mkdir build
+RUN cd build && cmake ..
+RUN cd build && cmake --build . -j4
 
-CMD ["./build/app/Server"]
+CMD ["./build/workers"]
