@@ -6,6 +6,6 @@ COPY . .
 
 RUN mkdir build
 RUN cd build && cmake ..
-RUN cd build && cmake --build . -j4
+RUN cd build && cmake --build . -j4 --config Release --target workers
 
 CMD ["./build/workers"]
