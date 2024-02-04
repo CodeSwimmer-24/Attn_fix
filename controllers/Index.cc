@@ -1,6 +1,6 @@
-#include "IndexCtrl.h"
+#include "Index.h"
 
-void IndexCtrl::asyncHandleHttpRequest(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback)
+void Index::asyncHandleHttpRequest(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback)
 {
     auto resp = HttpResponse::newHttpResponse();
     resp->setStatusCode(k200OK);
