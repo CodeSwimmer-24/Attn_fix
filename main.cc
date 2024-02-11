@@ -5,7 +5,7 @@ int main() {
 #ifdef _WIN32
     drogon::app().loadConfigFile("../../config.json");
 #else
-    drogon::app().loadConfigFile("../config.json");
+    drogon::app().loadConfigFile("./config.json");
 #endif
     
     // drogon::app().registerHandler("/", [](const drogon::HttpRequest& req
