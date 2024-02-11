@@ -22,8 +22,8 @@ const std::string WorkerSkills::tableName = "worker_skills";
 
 const std::vector<typename WorkerSkills::MetaData> WorkerSkills::metaData_={
 {"id","uint32_t","int(10) unsigned",4,0,1,1},
-{"worker","uint32_t","int(11) unsigned",4,0,0,1},
-{"skill","uint32_t","int(11) unsigned",4,0,0,1}
+{"worker","uint32_t","int(10) unsigned",4,0,0,1},
+{"skill","uint32_t","int(10) unsigned",4,0,0,1}
 };
 const std::string &WorkerSkills::getColumnName(size_t index) noexcept(false)
 {
