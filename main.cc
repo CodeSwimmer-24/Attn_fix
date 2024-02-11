@@ -17,7 +17,7 @@ int main() {
 
     //Run HTTP framework,the method will block in the internal event loop
     // drogon::app().addListener("0.0.0.0", 5555);
-    LOG_INFO << "Server running on 127.0.0.1:5555";
+    LOG_INFO << "Server running on 127.0.0.1:80";
     drogon::app().run();
 
     return 0;
