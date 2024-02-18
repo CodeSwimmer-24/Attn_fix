@@ -1,0 +1,47 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "workers-be",
+    "dateExported": "2024-02-18T08:03:09.757Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "162b0bac-63a2-406f-9d98-47a91c1c9457",
+            "colId": "cd0d0e1c-cdff-47cd-a632-7fbd63806b95",
+            "containerId": "",
+            "name": "index",
+            "url": "/",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2024-02-18T07:49:15.982Z",
+            "modified": "2024-02-18T07:49:19.489Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "6597e1c1-b4ae-4b6b-afb1-bd3e295fbf72",
+            "colId": "cd0d0e1c-cdff-47cd-a632-7fbd63806b95",
+            "containerId": "",
+            "name": "signup customer",
+            "url": "/auth/customer/signup",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2024-02-18T07:51:34.701Z",
+            "modified": "2024-02-18T07:55:15.763Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"full_name\": \"Atarashi Juon-Hu\",\n  \"email\": \"atarsh22@gmail.com\",\n  \"contact\": 7029152861,\n  \"address\": \"This is a dummy text.\",\n  \"locality\": 1,\n  \"district\": 1,\n  \"state\": 1\n}",
+                "form": []
+            },
+            "tests": []
+        }
+    ],
+    "settings": {
+        "options": {
+            "baseUrl": "http://localhost:80"
+        }
+    }
+}
