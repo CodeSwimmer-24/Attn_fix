@@ -1,5 +1,6 @@
 #include "Auth.h"
 #include "models/Customers.h"
+
 // Add definition of your processing function here
 void Auth::signupWorker(const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback) {
     LOG_DEBUG << "Worker Signup";
@@ -11,7 +12,7 @@ void Auth::signupWorker(const HttpRequestPtr &req, std::function<void (const Htt
 }
 
 void Auth::signupCustomer(const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback) {
-    LOG_DEBUG << "Customer Signup";
+    LOG_INFO << "Customer Signup";
 
     auto data = req->getJsonObject();
     Json::Value ret;
@@ -30,13 +31,13 @@ void Auth::signupCustomer(const HttpRequestPtr &req, std::function<void (const H
             resp = HttpResponse::newHttpJsonResponse(ret);
             resp->setStatusCode(k400BadRequest);
         } else {
-            drogon::orm::DbClientPtr dbPtr;
-            auto contact = (*data)["contact"].asInt64();
+            drogon::orm::DbClientPtr dbPtr = drogon::app().getDbClient();
+            auto contact = (*data)["contact"].asUInt64();
             drogon::orm::Criteria criterion("contact", drogon::orm::CompareOperator::EQ, contact);
             drogon::orm::Mapper<drogon_model::workersdb::Customers> customerMap(dbPtr);
-            auto records = customerMap.findBy(criterion);
+            size_t count = customerMap.count(criterion);
 
-            if (records.empty()) {
+            if (!count) {
                 drogon_model::workersdb::Customers customerObj(*data);
                 customerMap.insert(customerObj);
                 
@@ -47,7 +48,7 @@ void Auth::signupCustomer(const HttpRequestPtr &req, std::function<void (const H
                 ret["message"] = "Customer already exists";
                 resp = HttpResponse::newHttpJsonResponse(ret);
                 resp->setStatusCode(k403Forbidden);
-            }            
+            }   
         }
     } else {
         ret["message"] = "Invalid request, provide the json data";
