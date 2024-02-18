@@ -1,7 +1,7 @@
 {
     "client": "Thunder Client",
     "collectionName": "workers-be",
-    "dateExported": "2024-02-18T08:03:09.757Z",
+    "dateExported": "2024-02-18T10:19:40.764Z",
     "version": "1.1",
     "folders": [],
     "requests": [
@@ -34,6 +34,25 @@
             "body": {
                 "type": "json",
                 "raw": "{\n  \"full_name\": \"Atarashi Juon-Hu\",\n  \"email\": \"atarsh22@gmail.com\",\n  \"contact\": 7029152861,\n  \"address\": \"This is a dummy text.\",\n  \"locality\": 1,\n  \"district\": 1,\n  \"state\": 1\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "88a1b492-d865-4ab2-85ff-f5c9c586180d",
+            "colId": "cd0d0e1c-cdff-47cd-a632-7fbd63806b95",
+            "containerId": "",
+            "name": "login customer",
+            "url": "/auth/customer/login",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2024-02-18T10:17:45.587Z",
+            "modified": "2024-02-18T10:18:41.597Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"contact\": 7029152861\n}",
                 "form": []
             },
             "tests": []

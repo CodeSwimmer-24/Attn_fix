@@ -70,10 +70,40 @@ void Auth::loginWorker(const HttpRequestPtr &req, std::function<void (const Http
 }
 
 void Auth::loginCustomer(const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback) {
-    LOG_DEBUG << "Customer Login";
+    LOG_INFO << "Customer Login";
 
+    auto data = req->getJsonObject();
     Json::Value ret;
-    ret["result"]="ok";
-    auto resp = HttpResponse::newHttpJsonResponse(ret);
+    HttpResponsePtr resp;
+    
+    if (data) {
+        if ((*data)["contact"].asString() == "") {
+            ret["message"] = "Invalid json data";
+            resp = HttpResponse::newHttpJsonResponse(ret);
+            resp->setStatusCode(k400BadRequest);
+        } else {
+            drogon::orm::DbClientPtr dbPtr = drogon::app().getDbClient();
+            auto contact = (*data)["contact"].asUInt64();
+            drogon::orm::Criteria criterion("contact", drogon::orm::CompareOperator::EQ, contact);
+            drogon::orm::Mapper<drogon_model::workersdb::Customers> customerMap(dbPtr);
+            size_t count = customerMap.count(criterion);
+
+            if (!count) {
+                ret["message"] = "Customer does not exists";
+                resp = HttpResponse::newHttpJsonResponse(ret);
+                resp->setStatusCode(k404NotFound);
+            } else {
+                ret["message"] = "Customer login successful";
+                resp = HttpResponse::newHttpJsonResponse(ret);
+                resp->setStatusCode(k200OK);
+            }
+        }
+    } else {
+        ret["message"] = "Invalid request, provide the json data";
+        
+        resp = HttpResponse::newHttpJsonResponse(ret);
+        resp->setStatusCode(k400BadRequest);
+    }
+
     callback(resp);
 }
