@@ -20,7 +20,7 @@ const bool Localities::hasPrimaryKey = true;
 const std::string Localities::tableName = "localities";
 
 const std::vector<typename Localities::MetaData> Localities::metaData_={
-{"id","uint32_t","int(10) unsigned",4,0,1,1},
+{"id","uint32_t","int(10) unsigned",4,1,1,1},
 {"name","std::string","varchar(60)",60,0,0,1}
 };
 const std::string &Localities::getColumnName(size_t index) noexcept(false)
@@ -199,12 +199,12 @@ void Localities::setName(std::string &&pName) noexcept
 
 void Localities::updateId(const uint64_t id)
 {
+    id_ = std::make_shared<uint32_t>(static_cast<uint32_t>(id));
 }
 
 const std::vector<std::string> &Localities::insertColumns() noexcept
 {
     static const std::vector<std::string> inCols={
-        "id",
         "name"
     };
     return inCols;
@@ -212,17 +212,6 @@ const std::vector<std::string> &Localities::insertColumns() noexcept
 
 void Localities::outputArgs(drogon::orm::internal::SqlBinder &binder) const
 {
-    if(dirtyFlag_[0])
-    {
-        if(getId())
-        {
-            binder << getValueOfId();
-        }
-        else
-        {
-            binder << nullptr;
-        }
-    }
     if(dirtyFlag_[1])
     {
         if(getName())
@@ -239,10 +228,6 @@ void Localities::outputArgs(drogon::orm::internal::SqlBinder &binder) const
 const std::vector<std::string> Localities::updateColumns() const
 {
     std::vector<std::string> ret;
-    if(dirtyFlag_[0])
-    {
-        ret.push_back(getColumnName(0));
-    }
     if(dirtyFlag_[1])
     {
         ret.push_back(getColumnName(1));
@@ -252,17 +237,6 @@ const std::vector<std::string> Localities::updateColumns() const
 
 void Localities::updateArgs(drogon::orm::internal::SqlBinder &binder) const
 {
-    if(dirtyFlag_[0])
-    {
-        if(getId())
-        {
-            binder << getValueOfId();
-        }
-        else
-        {
-            binder << nullptr;
-        }
-    }
     if(dirtyFlag_[1])
     {
         if(getName())
@@ -354,11 +328,6 @@ bool Localities::validateJsonForCreation(const Json::Value &pJson, std::string &
         if(!validJsonOfField(0, "id", pJson["id"], err, true))
             return false;
     }
-    else
-    {
-        err="The id column cannot be null";
-        return false;
-    }
     if(pJson.isMember("name"))
     {
         if(!validJsonOfField(1, "name", pJson["name"], err, true))
@@ -388,11 +357,6 @@ bool Localities::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, true))
                   return false;
           }
-        else
-        {
-            err="The " + pMasqueradingVector[0] + " column cannot be null";
-            return false;
-        }
       }
       if(!pMasqueradingVector[1].empty())
       {
@@ -479,6 +443,11 @@ bool Localities::validJsonOfField(size_t index,
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
+                return false;
+            }
+            if(isForCreation)
+            {
+                err="The automatic primary key cannot be set";
                 return false;
             }
             if(!pJson.isUInt())

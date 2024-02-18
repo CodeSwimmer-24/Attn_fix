@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS workersdb;
 USE workersdb;
 
 CREATE TABLE IF NOT EXISTS `workers` (
-  `id` integer unsigned PRIMARY KEY,
+  `id` integer unsigned PRIMARY KEY AUTO_INCREMENT,
   `full_name` varchar(60) NOT NULL,
   `email` varchar(120) UNIQUE NOT NULL,
   `contact` bigint unsigned UNIQUE NOT NULL COMMENT 'should be checked that length is 10 digits',
@@ -26,18 +26,18 @@ CREATE TABLE IF NOT EXISTS `workers` (
 );
 
 CREATE TABLE IF NOT EXISTS `skills` (
-  `id` integer unsigned PRIMARY KEY,
+  `id` integer unsigned PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(20) UNIQUE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `worker_skills` (
-  `id` integer unsigned PRIMARY KEY,
+  `id` integer unsigned PRIMARY KEY AUTO_INCREMENT,
   `worker` integer unsigned NOT NULL,
   `skill` integer unsigned NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `customers` (
-  `id` integer unsigned PRIMARY KEY,
+  `id` integer unsigned PRIMARY KEY AUTO_INCREMENT,
   `full_name` varchar(60) NOT NULL,
   `email` varchar(120) UNIQUE NOT NULL,
   `contact` bigint unsigned UNIQUE NOT NULL COMMENT 'should be checked that length is 10 digits',
@@ -48,22 +48,22 @@ CREATE TABLE IF NOT EXISTS `customers` (
 );
 
 CREATE TABLE IF NOT EXISTS `localities` (
-  `id` integer unsigned PRIMARY KEY,
+  `id` integer unsigned PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(60) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `districts` (
-  `id` integer unsigned PRIMARY KEY,
+  `id` integer unsigned PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(60) UNIQUE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `states` (
-  `id` integer unsigned PRIMARY KEY,
+  `id` integer unsigned PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(60) UNIQUE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `qualifications` (
-  `id` tinyint unsigned PRIMARY KEY,
+  `id` tinyint unsigned PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255) UNIQUE NOT NULL
 );
 

@@ -39,7 +39,7 @@ const bool Workers::hasPrimaryKey = true;
 const std::string Workers::tableName = "workers";
 
 const std::vector<typename Workers::MetaData> Workers::metaData_={
-{"id","uint32_t","int(10) unsigned",4,0,1,1},
+{"id","uint32_t","int(10) unsigned",4,1,1,1},
 {"full_name","std::string","varchar(60)",60,0,0,1},
 {"email","std::string","varchar(120)",120,0,0,1},
 {"contact","uint64_t","bigint(20) unsigned",8,0,0,1},
@@ -1389,12 +1389,12 @@ void Workers::setExtraConditionToNull() noexcept
 
 void Workers::updateId(const uint64_t id)
 {
+    id_ = std::make_shared<uint32_t>(static_cast<uint32_t>(id));
 }
 
 const std::vector<std::string> &Workers::insertColumns() noexcept
 {
     static const std::vector<std::string> inCols={
-        "id",
         "full_name",
         "email",
         "contact",
@@ -1421,17 +1421,6 @@ const std::vector<std::string> &Workers::insertColumns() noexcept
 
 void Workers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
 {
-    if(dirtyFlag_[0])
-    {
-        if(getId())
-        {
-            binder << getValueOfId();
-        }
-        else
-        {
-            binder << nullptr;
-        }
-    }
     if(dirtyFlag_[1])
     {
         if(getFullName())
@@ -1657,10 +1646,6 @@ void Workers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
 const std::vector<std::string> Workers::updateColumns() const
 {
     std::vector<std::string> ret;
-    if(dirtyFlag_[0])
-    {
-        ret.push_back(getColumnName(0));
-    }
     if(dirtyFlag_[1])
     {
         ret.push_back(getColumnName(1));
@@ -1746,17 +1731,6 @@ const std::vector<std::string> Workers::updateColumns() const
 
 void Workers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
 {
-    if(dirtyFlag_[0])
-    {
-        if(getId())
-        {
-            binder << getValueOfId();
-        }
-        else
-        {
-            binder << nullptr;
-        }
-    }
     if(dirtyFlag_[1])
     {
         if(getFullName())
@@ -2570,11 +2544,6 @@ bool Workers::validateJsonForCreation(const Json::Value &pJson, std::string &err
         if(!validJsonOfField(0, "id", pJson["id"], err, true))
             return false;
     }
-    else
-    {
-        err="The id column cannot be null";
-        return false;
-    }
     if(pJson.isMember("full_name"))
     {
         if(!validJsonOfField(1, "full_name", pJson["full_name"], err, true))
@@ -2769,11 +2738,6 @@ bool Workers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, true))
                   return false;
           }
-        else
-        {
-            err="The " + pMasqueradingVector[0] + " column cannot be null";
-            return false;
-        }
       }
       if(!pMasqueradingVector[1].empty())
       {
@@ -3272,6 +3236,11 @@ bool Workers::validJsonOfField(size_t index,
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
+                return false;
+            }
+            if(isForCreation)
+            {
+                err="The automatic primary key cannot be set";
                 return false;
             }
             if(!pJson.isUInt())

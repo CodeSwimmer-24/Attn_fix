@@ -367,11 +367,8 @@ class Workers
         std::string sql="insert into " + tableName + " (";
         size_t parametersCount = 0;
         needSelection = false;
-        if(dirtyFlag_[0])
-        {
             sql += "id,";
             ++parametersCount;
-        }
         if(dirtyFlag_[1])
         {
             sql += "full_name,";
@@ -472,6 +469,7 @@ class Workers
             sql += "extra_condition,";
             ++parametersCount;
         }
+        needSelection=true;
         if(parametersCount > 0)
         {
             sql[sql.length()-1]=')';
@@ -480,11 +478,7 @@ class Workers
         else
             sql += ") values (";
 
-        if(dirtyFlag_[0])
-        {
-            sql.append("?,");
-
-        }
+        sql +="default,";
         if(dirtyFlag_[1])
         {
             sql.append("?,");
