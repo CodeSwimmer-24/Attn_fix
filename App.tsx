@@ -1,11 +1,16 @@
-import {View, Text} from 'react-native';
+import {View, Text, ScrollView} from 'react-native';
 import React from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import 'react-native-gesture-handler';
+import Auth from './src/navigators/Auth/Auth';
+import {StatusBar} from 'react-native';
 
 const App = () => {
   return (
-    <View>
-      <Text>App</Text>
-    </View>
+    <NavigationContainer>
+      <Auth />
+      <StatusBar backgroundColor="#355efc" />
+    </NavigationContainer>
   );
 };
 
