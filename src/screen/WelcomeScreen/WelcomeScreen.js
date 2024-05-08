@@ -18,7 +18,7 @@ const WelcomeScreen = () => {
       />
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate('Home');
+          navigation.navigate('TabNavigation');
         }}
         style={styles.button}>
         <Image
