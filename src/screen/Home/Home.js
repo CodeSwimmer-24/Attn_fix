@@ -3,13 +3,16 @@ import {StyleSheet, Text} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Header from '../../components/Header/Header';
 import {ScrollView} from 'react-native-gesture-handler';
+import HomeCategories from '../../components/HomeCategories/HomeCategories';
+import Poster from '../../components/Poster/Poster';
 
 const Home = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Header />
       <ScrollView>
-        <Text>Hello</Text>
+        <Poster />
+        <HomeCategories />
       </ScrollView>
     </SafeAreaView>
   );

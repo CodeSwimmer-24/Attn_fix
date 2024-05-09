@@ -1,31 +1,37 @@
-import {View, Text} from 'react-native';
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {View, Text, StyleSheet} from 'react-native';
 import Home from '../../screen/Home/Home';
 import Cart from '../../screen/Cart/Cart';
 import Categories from '../../screen/Categories/Categories';
 import Dashboard from '../../screen/Dashboard/Dashboard';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Tab = createBottomTabNavigator();
+
 const TabNavigation = () => {
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
         headerShown: false,
-        tabBarIcon: ({color, size, focused}) => {
+        tabBarStyle: styles.tabBarStyle,
+        tabBarActiveTintColor: '#4f5d75',
+        tabBarInactiveTintColor: '#4f5d75',
+        tabBarShowLabel: false,
+        tabBarIcon: ({focused, color, size}) => {
           let iconName;
 
           if (route.name === 'Home') {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'Like') {
-            iconName = focused ? 'home' : 'home';
+            iconName = focused ? 'heart' : 'heart-outline';
           } else if (route.name === 'Categories') {
-            iconName = focused ? 'home' : 'home';
+            iconName = focused ? 'grid' : 'grid-outline';
           } else if (route.name === 'Dashboard') {
-            iconName = focused ? 'home' : 'home';
+            iconName = focused ? 'settings' : 'settings-outline';
           }
-          return <Icon name={iconName} size={22} color="black" />;
+
+          return <Ionicons name={iconName} size={24} color={color} />;
         },
       })}>
       <Tab.Screen name="Home" component={Home} />
@@ -35,5 +41,11 @@ const TabNavigation = () => {
     </Tab.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  tabBarStyle: {
+    height: 55,
+  },
+});
 
 export default TabNavigation;

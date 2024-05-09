@@ -3,7 +3,7 @@ import React from 'react';
 import Location from '../Location/Location';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {Image} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/Feather';
 
 const Header = () => {
   return (
@@ -24,22 +24,29 @@ const Header = () => {
           <View style={styles.textName}>
             <Text
               style={{
-                fontSize: 13,
-                color: 'white',
+                fontSize: 12,
+                color: '#4f5d75',
               }}>
               Hey 👋. Welcome 🎉
             </Text>
             <Text
               style={{
-                fontSize: 18,
+                fontSize: 16,
+                color: '#4f5d75',
                 fontWeight: '600',
-                color: 'white',
               }}>
               Fahad Mahamood
             </Text>
           </View>
         </View>
-        <Icon size={24} color="white" name="bell" />
+        <Icon
+          style={{
+            marginRight: 5,
+          }}
+          size={22}
+          color="#4f5d75"
+          name="bell"
+        />
       </View>
       <Location />
     </>
@@ -49,23 +56,23 @@ const Header = () => {
 const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     paddingVertical: 10,
-    backgroundColor: '#355efc',
+    backgroundColor: 'white',
     justifyContent: 'space-between',
     alignItems: 'center',
     // position: 'fixed',
   },
   headerItem: {
     flexDirection: 'row',
-    backgroundColor: '#355efc',
+    // backgroundColor: '#355efc',
   },
   textName: {
     marginLeft: 10,
   },
   profileImage: {
-    height: 40,
-    width: 40,
+    height: 36,
+    width: 36,
     borderRadius: 50,
     evaluation: 15,
   },

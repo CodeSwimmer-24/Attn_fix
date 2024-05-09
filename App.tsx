@@ -9,7 +9,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Auth />
-      <StatusBar backgroundColor="#355efc" />
+      <StatusBar animated={true} backgroundColor="lightgray" />
     </NavigationContainer>
   );
 };
