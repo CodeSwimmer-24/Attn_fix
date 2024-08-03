@@ -50,12 +50,33 @@
         font-size: 1rem;
         cursor: pointer;
         transition: background-color 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       button:hover {
         background-color: #0056b3;
       }
       .form-group {
         margin-bottom: 1.5rem;
+      }
+      .spinner {
+        display: none;
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid rgba(255, 255, 255, 0.6);
+        border-top: 2px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-left: 0.5rem;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
       }
     </style>
   </head>
@@ -91,7 +112,10 @@
             </script>
           </select>
         </div>
-        <button type="submit">Generate Report</button>
+        <button type="submit">
+          Generate Report
+          <div class="spinner" id="spinner"></div>
+        </button>
       </form>
     </div>
     <script>
@@ -102,32 +126,42 @@
           const month = document.getElementById("month").value;
           const year = document.getElementById("year").value;
 
-          const numMonth = +month;
-          const numYear = +year;
+          const button = event.target.querySelector("button");
+          const spinner = document.getElementById("spinner");
 
-          const response = await fetch(
-            "http://localhost:3000/generate_report",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ numMonth, numYear }),
+          button.disabled = true;
+          spinner.style.display = "inline-block";
+
+          try {
+            const response = await fetch(
+              "http://localhost:3000/generate_report",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ month, year }),
+              }
+            );
+
+            if (response.ok) {
+              const blob = await response.blob();
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.style.display = "none";
+              a.href = url;
+              a.download = "output.csv";
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
+            } else {
+              alert("Failed to generate report");
             }
-          );
-
-          if (response.ok) {
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.style.display = "none";
-            a.href = url;
-            a.download = "output.csv";
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-          } else {
-            alert("Failed to generate report");
+          } catch (error) {
+            alert("An error occurred while generating the report");
+          } finally {
+            button.disabled = false;
+            spinner.style.display = "none";
           }
         });
     </script>
