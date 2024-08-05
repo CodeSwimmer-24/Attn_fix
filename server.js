@@ -281,7 +281,12 @@ app.post("/generate_report", (req, res) => {
               const csv = json2csv.parse(data);
               const outputPath = path.join(__dirname, "output.csv");
               fs.writeFileSync(outputPath, csv);
-              res.sendFile(outputPath);
+              res.download(outputPath, "output.csv", (err) => {
+                if (err) {
+                  console.error("Error sending file:", err);
+                }
+                fs.unlinkSync(outputPath); // Delete the file after sending it
+              });
             } catch (err) {
               console.error("Error generating CSV:", err);
               res.status(500).json({ error: "Error generating CSV" });
