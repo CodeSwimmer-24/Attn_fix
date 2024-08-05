@@ -19,6 +19,180 @@ const db = mysql.createConnection({
   database: process.env.DB_SCHEMA,
 });
 
+app.get("/", (req, res) => {
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Attendance Report Generator</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+          }
+          .container {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+          }
+          h1 {
+            text-align: center;
+            color: #343a40;
+          }
+          form {
+            display: flex;
+            flex-direction: column;
+          }
+          label {
+            margin-top: 1rem;
+            color: #495057;
+          }
+          select {
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+          }
+          button {
+            margin-top: 2rem;
+            padding: 0.75rem;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          button:hover {
+            background-color: #0056b3;
+          }
+          .form-group {
+            margin-bottom: 1.5rem;
+          }
+          .spinner {
+            display: none;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 0.5rem;
+          }
+          @keyframes spin {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1>Generate Attendance Report</h1>
+          <form id="reportForm">
+            <div class="form-group">
+              <label for="month">Month:</label>
+              <select id="month" name="month" required>
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="year">Year:</label>
+              <select id="year" name="year" required>
+                <script>
+                  const currentYear = new Date().getFullYear();
+                  for (let year = currentYear; year >= 2000; year--) {
+                    document.write(\`<option value="\${year}">\${year}</option>\`);
+                  }
+                </script>
+              </select>
+            </div>
+            <button type="submit">
+              Generate Report
+              <div class="spinner" id="spinner"></div>
+            </button>
+          </form>
+        </div>
+        <script>
+          document
+            .getElementById("reportForm")
+            .addEventListener("submit", async function (event) {
+              event.preventDefault();
+              const month = document.getElementById("month").value;
+              const year = document.getElementById("year").value;
+
+              const button = event.target.querySelector("button");
+              const spinner = document.getElementById("spinner");
+
+              button.disabled = true;
+              spinner.style.display = "inline-block";
+
+              try {
+                const response = await fetch(
+                  "/generate_report",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ month, year }),
+                  }
+                );
+
+                if (response.ok) {
+                  const blob = await response.blob();
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.style.display = "none";
+                  a.href = url;
+                  a.download = "output.csv";
+                  document.body.appendChild(a);
+                  a.click();
+                  window.URL.revokeObjectURL(url);
+                } else {
+                  alert("Failed to generate report");
+                }
+              } catch (error) {
+                alert("An error occurred while generating the report");
+              } finally {
+                button.disabled = false;
+                spinner.style.display = "none";
+              }
+            });
+        </script>
+      </body>
+    </html>
+  `);
+});
+
 app.post("/generate_report", (req, res) => {
   const { month, year } = req.body;
   const days = new Date(year, month, 0).getDate();
