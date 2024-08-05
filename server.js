@@ -19,12 +19,27 @@ const db = mysql.createConnection({
   database: process.env.DB_SCHEMA,
 });
 
-db.connect((err) => {
-  if (err) {
-    console.error("Error connecting to the database:", err);
-    process.exit(1);
+// Handle database connection errors and reconnect if necessary
+const connectToDatabase = () => {
+  db.connect((err) => {
+    if (err) {
+      console.error("Error connecting to the database:", err);
+      setTimeout(connectToDatabase, 2000); // Attempt to reconnect after 2 seconds
+    } else {
+      console.log("Connected to the database");
+    }
+  });
+};
+
+connectToDatabase();
+
+// Handle connection errors during runtime
+db.on("error", (err) => {
+  console.error("Database error:", err);
+  if (err.code === "PROTOCOL_CONNECTION_LOST") {
+    connectToDatabase(); // Reconnect on connection loss
   } else {
-    console.log("Connected to the database");
+    throw err;
   }
 });
 
@@ -220,7 +235,7 @@ app.post("/generate_report", (req, res) => {
   db.query("SELECT * FROM employees", (err, employees) => {
     if (err) {
       console.error("Error fetching employees:", err);
-      return res.status(500).json({ error: err.message });
+      return res.status(500).json({ error: "Error fetching employees" });
     }
 
     const data = employees.map((employee) => ({
@@ -231,7 +246,7 @@ app.post("/generate_report", (req, res) => {
       "Total OT": 0,
     }));
 
-    let query =
+    const query =
       "SELECT * FROM attendance_record WHERE emp_id IN (?) AND date BETWEEN ? AND ? ORDER BY date";
     db.query(
       query,
@@ -243,7 +258,9 @@ app.post("/generate_report", (req, res) => {
       (err, attendances) => {
         if (err) {
           console.error("Error fetching attendance records:", err);
-          return res.status(500).json({ error: err.message });
+          return res
+            .status(500)
+            .json({ error: "Error fetching attendance records" });
         }
 
         attendances.forEach((attendance) => {
@@ -259,15 +276,17 @@ app.post("/generate_report", (req, res) => {
           }`;
         });
 
-        query =
+        const historyQuery =
           "SELECT * FROM attendance_history WHERE emp_id IN (?) AND year = ? AND month = ?";
         db.query(
-          query,
+          historyQuery,
           [employees.map((e) => e.empId), year, month],
           (err, histories) => {
             if (err) {
               console.error("Error fetching attendance histories:", err);
-              return res.status(500).json({ error: err.message });
+              return res
+                .status(500)
+                .json({ error: "Error fetching attendance histories" });
             }
 
             histories.forEach((history) => {
@@ -301,4 +320,15 @@ app.post("/generate_report", (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+});
+
+// Global error handlers
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  process.exit(1);
 });
