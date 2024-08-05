@@ -19,6 +19,15 @@ const db = mysql.createConnection({
   database: process.env.DB_SCHEMA,
 });
 
+db.connect((err) => {
+  if (err) {
+    console.error("Error connecting to the database:", err);
+    process.exit(1);
+  } else {
+    console.log("Connected to the database");
+  }
+});
+
 app.get("/", (req, res) => {
   res.send(`
     <!DOCTYPE html>
@@ -210,6 +219,7 @@ app.post("/generate_report", (req, res) => {
 
   db.query("SELECT * FROM employees", (err, employees) => {
     if (err) {
+      console.error("Error fetching employees:", err);
       return res.status(500).json({ error: err.message });
     }
 
@@ -232,6 +242,7 @@ app.post("/generate_report", (req, res) => {
       ],
       (err, attendances) => {
         if (err) {
+          console.error("Error fetching attendance records:", err);
           return res.status(500).json({ error: err.message });
         }
 
@@ -255,6 +266,7 @@ app.post("/generate_report", (req, res) => {
           [employees.map((e) => e.empId), year, month],
           (err, histories) => {
             if (err) {
+              console.error("Error fetching attendance histories:", err);
               return res.status(500).json({ error: err.message });
             }
 
@@ -265,11 +277,15 @@ app.post("/generate_report", (req, res) => {
             });
 
             const json2csv = new Parser({ fields: headers });
-            const csv = json2csv.parse(data);
-            const outputPath = path.join(__dirname, "output.csv");
-            fs.writeFileSync(outputPath, csv);
-
-            res.sendFile(outputPath);
+            try {
+              const csv = json2csv.parse(data);
+              const outputPath = path.join(__dirname, "output.csv");
+              fs.writeFileSync(outputPath, csv);
+              res.sendFile(outputPath);
+            } catch (err) {
+              console.error("Error generating CSV:", err);
+              res.status(500).json({ error: "Error generating CSV" });
+            }
           }
         );
       }
